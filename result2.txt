@@ -1,0 +1,108 @@
+Experiment 2: SDN (L2) Results
+============================================================
+
+Baseline connectivity (before adding flows):
+------------------------------------------------------------
+h1 -> h3 (ping -c 1):
+PING 10.0.0.3 (10.0.0.3) 56(84) bytes of data.
+64 bytes from 10.0.0.3: icmp_seq=1 ttl=64 time=0.802 ms
+
+--- 10.0.0.3 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.802/0.802/0.802/0.000 ms
+
+h2 -> h3 (ping -c 1):
+PING 10.0.0.3 (10.0.0.3) 56(84) bytes of data.
+64 bytes from 10.0.0.3: icmp_seq=1 ttl=64 time=0.274 ms
+
+--- 10.0.0.3 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.274/0.274/0.274/0.000 ms
+
+
+Switch s1 state BEFORE adding flows:
+------------------------------------------------------------
+sudo ovs-ofctl show s1
+OFPT_FEATURES_REPLY (xid=0x2): dpid:0000000000000001
+n_tables:254, n_buffers:0
+capabilities: FLOW_STATS TABLE_STATS PORT_STATS QUEUE_STATS ARP_MATCH_IP
+actions: output enqueue set_vlan_vid set_vlan_pcp strip_vlan mod_dl_src mod_dl_dst mod_nw_src mod_nw_dst mod_nw_tos mod_tp_src mod_tp_dst
+ 1(s1-eth1): addr:32:fb:07:91:41:68
+     config:     0
+     state:      0
+     current:    10GB-FD COPPER
+     speed: 10000 Mbps now, 0 Mbps max
+ 2(s1-eth2): addr:a6:8f:65:2e:fd:14
+     config:     0
+     state:      0
+     current:    10GB-FD COPPER
+     speed: 10000 Mbps now, 0 Mbps max
+ 3(s1-eth3): addr:16:87:28:69:15:20
+     config:     0
+     state:      0
+     current:    10GB-FD COPPER
+     speed: 10000 Mbps now, 0 Mbps max
+ LOCAL(s1): addr:12:29:ea:31:53:4d
+     config:     PORT_DOWN
+     state:      LINK_DOWN
+     speed: 0 Mbps now, 0 Mbps max
+OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0
+
+sudo ovs-ofctl dump-flows s1
+ cookie=0x0, duration=0.022s, table=0, n_packets=8, n_bytes=560, priority=0 actions=NORMAL
+
+
+Switch s1 state AFTER adding flows:
+------------------------------------------------------------
+sudo ovs-ofctl show s1
+OFPT_FEATURES_REPLY (xid=0x2): dpid:0000000000000001
+n_tables:254, n_buffers:0
+capabilities: FLOW_STATS TABLE_STATS PORT_STATS QUEUE_STATS ARP_MATCH_IP
+actions: output enqueue set_vlan_vid set_vlan_pcp strip_vlan mod_dl_src mod_dl_dst mod_nw_src mod_nw_dst mod_nw_tos mod_tp_src mod_tp_dst
+ 1(s1-eth1): addr:32:fb:07:91:41:68
+     config:     0
+     state:      0
+     current:    10GB-FD COPPER
+     speed: 10000 Mbps now, 0 Mbps max
+ 2(s1-eth2): addr:a6:8f:65:2e:fd:14
+     config:     0
+     state:      0
+     current:    10GB-FD COPPER
+     speed: 10000 Mbps now, 0 Mbps max
+ 3(s1-eth3): addr:16:87:28:69:15:20
+     config:     0
+     state:      0
+     current:    10GB-FD COPPER
+     speed: 10000 Mbps now, 0 Mbps max
+ LOCAL(s1): addr:12:29:ea:31:53:4d
+     config:     PORT_DOWN
+     state:      LINK_DOWN
+     speed: 0 Mbps now, 0 Mbps max
+OFPT_GET_CONFIG_REPLY (xid=0x4): frags=normal miss_send_len=0
+
+sudo ovs-ofctl dump-flows s1
+ cookie=0x0, duration=11.712s, table=0, n_packets=0, n_bytes=0, in_port="s1-eth2" actions=drop
+ cookie=0x0, duration=3.753s, table=0, n_packets=0, n_bytes=0, in_port="s1-eth1" actions=output:"s1-eth3"
+ cookie=0x0, duration=29.762s, table=0, n_packets=38, n_bytes=3012, priority=0 actions=NORMAL
+
+Commands used on s1:
+sudo ovs-ofctl add-flow s1 "in_port=2,actions=drop"
+sudo ovs-ofctl add-flow s1 "in_port=1,actions=output:3"
+
+Connectivity AFTER adding flows to s1:
+------------------------------------------------------------
+h1 -> h3 (ping -c 1):
+PING 10.0.0.3 (10.0.0.3) 56(84) bytes of data.
+64 bytes from 10.0.0.3: icmp_seq=1 ttl=64 time=0.993 ms
+
+--- 10.0.0.3 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.993/0.993/0.993/0.000 ms
+
+h2 -> h3 (ping -c 1):
+PING 10.0.0.3 (10.0.0.3) 56(84) bytes of data.
+
+--- 10.0.0.3 ping statistics ---
+1 packets transmitted, 0 received, 100% packet loss, time 0ms
+
+

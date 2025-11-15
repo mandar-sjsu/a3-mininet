@@ -1,0 +1,104 @@
+Experiment 1: IP Routing - Ping Test Results
+============================================================
+
+Test 1: h1 (10.0.0.3) to h3 (10.0.2.2)
+------------------------------------------------------------
+PING 10.0.2.2 (10.0.2.2) 56(84) bytes of data.
+64 bytes from 10.0.2.2: icmp_seq=1 ttl=62 time=0.034 ms
+
+--- 10.0.2.2 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.034/0.034/0.034/0.000 ms
+
+
+Test 2: h2 (10.0.3.2) to h3 (10.0.2.2)
+------------------------------------------------------------
+PING 10.0.2.2 (10.0.2.2) 56(84) bytes of data.
+64 bytes from 10.0.2.2: icmp_seq=1 ttl=62 time=0.029 ms
+
+--- 10.0.2.2 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.029/0.029/0.029/0.000 ms
+
+
+Test 3: h3 (10.0.2.2) to h1 (10.0.0.3)
+------------------------------------------------------------
+PING 10.0.0.3 (10.0.0.3) 56(84) bytes of data.
+64 bytes from 10.0.0.3: icmp_seq=1 ttl=62 time=0.004 ms
+
+--- 10.0.0.3 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.004/0.004/0.004/0.000 ms
+
+
+Test 4: h3 (10.0.2.2) to h2 (10.0.3.2)
+------------------------------------------------------------
+PING 10.0.3.2 (10.0.3.2) 56(84) bytes of data.
+64 bytes from 10.0.3.2: icmp_seq=1 ttl=62 time=0.004 ms
+
+--- 10.0.3.2 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 0.004/0.004/0.004/0.000 ms
+
+
+============================================================
+Routing Tables
+============================================================
+
+Router r1 routing table:
+------------------------------------------------------------
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.0.0.0        0.0.0.0         255.0.0.0       U     0      0        0 r1-eth0
+10.0.1.0        0.0.0.0         255.255.255.0   U     0      0        0 r1-eth1
+10.0.2.0        10.0.1.2        255.255.255.0   UG    0      0        0 r1-eth1
+10.0.3.0        0.0.0.0         255.255.255.0   U     0      0        0 r1-eth2
+
+
+Router r2 routing table:
+------------------------------------------------------------
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.0.0.0        10.0.1.1        255.255.255.0   UG    0      0        0 r2-eth0
+10.0.0.0        0.0.0.0         255.0.0.0       U     0      0        0 r2-eth0
+10.0.2.0        0.0.0.0         255.255.255.0   U     0      0        0 r2-eth1
+10.0.3.0        10.0.1.1        255.255.255.0   UG    0      0        0 r2-eth0
+
+
+============================================================
+ARP Tables
+============================================================
+
+h1 ARP table:
+------------------------------------------------------------
+Address                  HWtype  HWaddress           Flags Mask            Iface
+10.0.0.1                 ether   e6:53:f6:48:06:a3   CM                    h1-eth0
+
+
+h2 ARP table:
+------------------------------------------------------------
+Address                  HWtype  HWaddress           Flags Mask            Iface
+10.0.3.4                 ether   82:9b:c4:95:1e:fe   CM                    h2-eth0
+
+
+h3 ARP table:
+------------------------------------------------------------
+Address                  HWtype  HWaddress           Flags Mask            Iface
+10.0.2.1                 ether   3a:b0:f0:9e:fe:a1   CM                    h3-eth0
+
+
+r1 ARP table:
+------------------------------------------------------------
+Address                  HWtype  HWaddress           Flags Mask            Iface
+10.0.3.2                 ether   ca:93:85:81:a5:70   CM                    r1-eth2
+10.0.0.3                 ether   46:77:40:cf:f6:f6   CM                    r1-eth0
+10.0.1.2                 ether   32:98:c6:57:da:c3   CM                    r1-eth1
+
+
+r2 ARP table:
+------------------------------------------------------------
+Address                  HWtype  HWaddress           Flags Mask            Iface
+10.0.1.1                 ether   6a:84:5a:ad:de:53   CM                    r2-eth0
+10.0.2.2                 ether   6a:70:f4:16:1a:ea   CM                    r2-eth1
+
+
